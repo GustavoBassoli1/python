@@ -1,4 +1,3 @@
-from json import load
 import pickle
 import os
 from math import floor
@@ -12,19 +11,16 @@ class Encurtador:
 
     def __load_dic(self):
         if(os.path.isfile(self.nome_arq)):
-            print('Arquivo existe!!')
-            arq = open(self.nome_arq,'rb') 
-            #dic = pickle.load(arq)
-            #arq.close() 
-            print (arq)
+            arq = open(self.nome_arq,'rb')
+            self.dic = pickle.load(arq)
+            arq.close() 
+            return
         print('Arquivo não existe!!')
-        return False
 
     def __save_dic(self):
-        #gravando arquivo
-        with open(self.nome_arq, 'wb') as f:
-            pickle.dump('alo', f)
-        # salvar dicionario no arquivo .. variavel self.nome_arq
+        arq = open(self.nome_arq,'wb')
+        pickle.dump(self.dic, arq)
+        arq.close()
 
     def toBase(self, num, b = 62):
         if b <= 0 or b > 62:
@@ -48,12 +44,10 @@ class Encurtador:
         return res
 
     def encurtar(self, url):
-        # salvar no dicionario usando como chave o valor da variavel self.indice
-        # o valor a ser salvo é uma tupla onde a posicao 0 eh o indice convertido
-        # para string usando base62 e a posicao 1 eh a url original
-        # nao esqueca de incrementar a variavel self.indice
-        # e por fim, chamar o metodo __save_dic para salvar o dicionario no arquivo em disco.
-        pass
+        dado = (self.toBase(self.indice),url)
+        self.dic[self.indice] = dado
+        self.indice += 1
+        self.__save_dic()
 
     def buscar(self, url_curta):
         indice = self.to10(url_curta)
@@ -64,8 +58,9 @@ class Encurtador:
    
 ## TESTES ##
 e = Encurtador()
-#e.encurtar("https://imed.edu.br/Ensino/ciencia-da-computacao/graduacao/sobre-a-profissao/")
 
-#e.listar_urls()
+e.encurtar("https://imed.edu.br/Ensino/ciencia-da-computacao/graduacao/sobre-a-profissao3/")
 
-#print(e.buscar('g8'))
+e.listar_urls()
+
+print(e.buscar('g8'))
